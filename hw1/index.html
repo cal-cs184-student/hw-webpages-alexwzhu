@@ -1,112 +1,83 @@
+<!DOCTYPE html>
 <html>
-	<head>
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-		<style>
-			h1 {
-				text-align: center;
-			}
+<head>
+    <title>Rasterizer Assignment</title>
+</head>
+<body>
 
-			.container {
-				margin: 0 auto;
-				padding: 60px 20%;
-			}
+<h2>task 1</h2>
 
-			figure {
-				text-align: center;
-			}
+<p>
+In my own words, rasterizing a triangle is applying a function, to some group of pixels, that tells you whether a pixel is inside or outside of the triangle. The algorithm I use is essentially sampling the bounding box of the triangle. I calculate the smallest rectangle that can be drawn to encapsulate the given triangle. This rectangle is not rotated even if given a tilted triangle. I calculate this rectangle by finding the minimum and maximum y-coordinate and x-coordinate values of pixels belonging to the triangle. These values are derived from the given vertex coordinates.
+</p>
 
-			img {
-				display: inline-block;
-			}
+<h2>task 2</h2>
 
-			body {
-				font-family: 'Inter', sans-serif;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container">
-		<h1>CS184/284A Spring 2025 Homework 1 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+<p>
+The supersampling algorithm I used involved splitting each pixel into grids of “subpixels.” Given sample_rate, the dimensions of the grid of subpixels is sqrt(sample_rate) x sqrt(sample_rate). The algorithm computed the sample position for each subpixel within each pixel in some bounding box. Each of these sample positions would be sampled with the same function from task 1 to determine whether they are inside or outside of the triangle. For each pixel, a final pixel color is calculated by finding the average of all of its subpixel values. The updated sample_buffer of type std::vector&lt;Color&gt; now stores width x height x sample_rate.
+</p>
 
-		<br>
+<p>
+Supersampling is useful as it reduces jagged artifacts which are a result of simply calculating whether a pixel is inside or outside of some object. Breaking a pixel down into subpixels allows a rasterizer to approximate how much of a pixel is inside of an object. Supersampling is able to reduce aliasing, which is a result of undersampling, as it increases the sampling frequency within each pixel.
+</p>
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
-		
-		<br>
+<p>
+The major changes in the rasterization pipeline that I made were in rasterize_triangle and resolve_to_framebuffer methods. Two additional loops were added to the rasterize_triangle method in order to not only loop through the pixels but also the pixel’s subpixels. The resolve_to_framebuffer method was updated to find the average pixel value given subpixel values. As stated before, the sample_buffer data structure was also updated to store the additional subpixel values.
+</p>
 
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+<h2>Task 3</h2>
 
-		<figure>
-			<img src="lion.jpg" alt="Lion" style="width:50%"/>
-			<figcaption>You can add images with captions!</figcaption>
-		</figure>
+<p>
+I tried to make the cubeman perform a tree yoga pose where its arms are going up and one of its legs is bent inside.
+</p>
 
-		<!--
-		We've already added one heading per task, to make your write-up as navigable when grading. Please fit your write-up within these sections!
-		-->
+<h2>Task 4</h2>
 
-		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
+<p>
+I think of Barycentric Coordinates as a system that allows us to represent any point in a triangle with three scalars weights. Each of these weights indicates how “close” the pixel is to one of the triangle’s vertices. These weights enable something called attribute interpolation - a method that fills in the in between values of some object. Take for example the triangle below.
+</p>
 
-		<h2>Task 1: Drawing Single-Color Triangles</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<p>
+This triangle has a red colored top vertex, a green colored left vertex and a blue colored right vertex. Given a pixel inside this triangle, you can calculate the pixel’s color by doing a weighted calculation of its barycentric weights and each weight’s respective vertice’s color. For example, a pixel in the bottom left of the triangle would have a heavier weight corresponding to the green colored vertex - resulting in a more green pixel value. The pixel in the middle of the triangle would be colored equal parts red, green, and blue.
+</p>
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
-		<div style="display: flex; flex-direction: column; align-items: center;">
-			<table style="width: 100%; text-align: center; border-collapse: collapse;">
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			</table>
-		</div>
-		
-		<h2>Task 2: Antialiasing by Supersampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<p>
+svg/basic/test7.svg
+</p>
 
-		<h2>Task 3: Transforms</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<h2>Task 5</h2>
 
-		<h2>Task 4: Barycentric coordinates</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<p>
+Because a screen is discrete and not continuous, a subset of pixels must be chosen from the original image to display on the screen. This process is called pixel sampling. My implementation of pixel sampling for texture mapping involves finding the barycentric weights for each subpixel and then finding the corresponding coordinate on the texture image. Since the texture image is discrete, two sampling methods are used to choose the subpixels corresponding color from the texture image. Nearest Neighbor simply finds the closest texel to the subpixel’s corresponding texture image coordinate. It uses this texel’s color as the pixels final color on the screen. Bilinear Filtering blends the four texels that surround the subpixel’s corresponding texture image coordinate. The final pixel color on the screen is a weighted average of those four texels. The result is a much smoother pixel and continuous looking image. Below are some screenshots of screens that used different sampling rates with different sampling methods.
+</p>
 
-		<h2>Task 5: "Pixel sampling" for texture mapping</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<p>nearest neighbor at sample rate of 1</p>
+<p>bilinear filtering at sample rate of 1</p>
+<p>nearest neighbor at sample rate of 16</p>
+<p>bilinear filtering at sample rate of 16</p>
 
-		<h2>Task 6: "Level Sampling" with mipmaps for texture mapping</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<p>
+In general, the screens that used Bilinear Filtering looked a lot smoother and less jaggedy compared to the screens that used Nearest Neighbors. I observed that the largest differences between the two methods occur when the coordinate in the texture image is in between texels that are very different. Bilinear filtering leads to a much more smooth and averaged look compared to the result of using Nearest Neighbor. Large differences in results between the two methods can also be seen in more detailed areas that include sharper edges and round areas.
+</p>
 
-		<h2>(Optional) Task 7: Extra Credit - Draw Something Creative!</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<h2>Task 6</h2>
 
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
-		</div>
-	</body>
+<p>
+Without level sampling, textures further away suffer from aliasing because high frequency detail gets undersampled. In other words, many texels get compressed into one pixel on the screen. Level Sampling using Mipmaps helps resolve this issue. Mipmaps are downscaled versions of the texture image. For example, if the original texture image is 24x24, there will be Mipmaps of size 12x12, 6x6, 3x3, etc… Level sampling chooses which of these Mipmaps to use for texture mapping baked on how much the texture shrinks on screen. If a texture is more compressed, use a more downsized Mipmap and vice versa. In code, I implemented this system by finding how fast texture coordinates change across screen space. Depending on the sampling mode, I choose a Mipmap to sample from and continue with the sampling methods from Task 5.
+</p>
+
+<p>advantages</p>
+
+<p>
+Below are results of a tilted checker board on different pixel sampling and level sampling methods.
+</p>
+
+<p>L_ZERO and P_NEAREST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; L_ZERO and P_LINEAR</p>
+<p>L_NEAREST and P_NEAREST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; L_NEAREST and P_LINEAR</p>
+
+<p>
+We now have three techniques to improve screen quality differently: Pixel Sampling, Level Sampling, and Supersampling. Pixel Sampling is relatively low in memory usage compared to Level Sampling (store additional texture images) and Supersampling (sample buffer increases linear to sample rate). For speed, Bilinear filtering does 4 times the work compared to Nearest Neighbor. The speed between Level Sampling methods varies. L_ZERO and L_NEAREST are similar while L_LINEAR is 2x slower as it uses 2 Mipmaps. Supersampling slows linearly to its sample rate. Nearest Neighbor does not help with aliasing while Bilinear smooths overall jaggedness. Similarly for Level Sampling, L_ZERO performs poorly for textures further away. L_NEAREST and L_LINEAR both reduce aliasing with L_LINEAR performing better as it smoothes out jagged artifacts. Supersampling does not really help with textures further away but anti aliases with edges and shapes.
+</p>
+
+</body>
 </html>
