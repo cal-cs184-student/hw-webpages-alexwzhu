@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Rasterizer Assignment</title>
+    <title>Homework 1</title>
 </head>
 <body>
+
+<!-- Link at the very top -->
+<p><a href="https://cal-cs184-student.github.io/hw-webpages-alexwzhu/"></a></p>
 
 <h2>task 1</h2>
 
 <p>
 In my own words, rasterizing a triangle is applying a function, to some group of pixels, that tells you whether a pixel is inside or outside of the triangle. The algorithm I use is essentially sampling the bounding box of the triangle. I calculate the smallest rectangle that can be drawn to encapsulate the given triangle. This rectangle is not rotated even if given a tilted triangle. I calculate this rectangle by finding the minimum and maximum y-coordinate and x-coordinate values of pixels belonging to the triangle. These values are derived from the given vertex coordinates.
 </p>
-    <img src="screenshot_2-20_23-42-54.png">
+
+<img src="screenshot_2-20_23-42-54.png" width="600">
 
 <h2>task 2</h2>
 
@@ -25,8 +29,11 @@ Supersampling is useful as it reduces jagged artifacts which are a result of sim
 <p>
 The major changes in the rasterization pipeline that I made were in rasterize_triangle and resolve_to_framebuffer methods. Two additional loops were added to the rasterize_triangle method in order to not only loop through the pixels but also the pixel’s subpixels. The resolve_to_framebuffer method was updated to find the average pixel value given subpixel values. As stated before, the sample_buffer data structure was also updated to store the additional subpixel values.
 </p>
-
+<img src="screenshot_2-21_0-29-56.png" width="600">
+    
 <h2>Task 3</h2>
+
+<img src="screenshot_2-21_15-53-24.png" width="500">
 
 <p>
 I tried to make the cubeman perform a tree yoga pose where its arms are going up and one of its legs is bent inside.
@@ -38,9 +45,13 @@ I tried to make the cubeman perform a tree yoga pose where its arms are going up
 I think of Barycentric Coordinates as a system that allows us to represent any point in a triangle with three scalars weights. Each of these weights indicates how “close” the pixel is to one of the triangle’s vertices. These weights enable something called attribute interpolation - a method that fills in the in between values of some object. Take for example the triangle below.
 </p>
 
+<img src="screenshot_2-21_15-53-24.png" width="500">
+
 <p>
 This triangle has a red colored top vertex, a green colored left vertex and a blue colored right vertex. Given a pixel inside this triangle, you can calculate the pixel’s color by doing a weighted calculation of its barycentric weights and each weight’s respective vertice’s color. For example, a pixel in the bottom left of the triangle would have a heavier weight corresponding to the green colored vertex - resulting in a more green pixel value. The pixel in the middle of the triangle would be colored equal parts red, green, and blue.
 </p>
+
+<img src="screenshot_2-21_16-59-36.png" width="500">
 
 <p>
 svg/basic/test7.svg
@@ -52,10 +63,17 @@ svg/basic/test7.svg
 Because a screen is discrete and not continuous, a subset of pixels must be chosen from the original image to display on the screen. This process is called pixel sampling. My implementation of pixel sampling for texture mapping involves finding the barycentric weights for each subpixel and then finding the corresponding coordinate on the texture image. Since the texture image is discrete, two sampling methods are used to choose the subpixels corresponding color from the texture image. Nearest Neighbor simply finds the closest texel to the subpixel’s corresponding texture image coordinate. It uses this texel’s color as the pixels final color on the screen. Bilinear Filtering blends the four texels that surround the subpixel’s corresponding texture image coordinate. The final pixel color on the screen is a weighted average of those four texels. The result is a much smoother pixel and continuous looking image. Below are some screenshots of screens that used different sampling rates with different sampling methods.
 </p>
 
-<p>nearest neighbor at sample rate of 1</p>
-<p>bilinear filtering at sample rate of 1</p>
-<p>nearest neighbor at sample rate of 16</p>
-<p>bilinear filtering at sample rate of 16</p>
+<img src="screenshot_2-21_18-52-13.png" width="500">
+<p><i>nearest neighbor at sample rate of 1</i></p>
+
+<img src="screenshot_2-21_18-52-17.png" width="500">
+<p><i>bilinear filtering at sample rate of 1</i></p>
+
+<img src="screenshot_2-21_18-52-7.png" width="500">
+<p><i>nearest neighbor at sample rate of 16</i></p>
+
+<img src="screenshot_2-21_18-52-9.png" width="500">
+<p><i>bilinear filtering at sample rate of 16</i></p>
 
 <p>
 In general, the screens that used Bilinear Filtering looked a lot smoother and less jaggedy compared to the screens that used Nearest Neighbors. I observed that the largest differences between the two methods occur when the coordinate in the texture image is in between texels that are very different. Bilinear filtering leads to a much more smooth and averaged look compared to the result of using Nearest Neighbor. Large differences in results between the two methods can also be seen in more detailed areas that include sharper edges and round areas.
@@ -73,7 +91,14 @@ Without level sampling, textures further away suffer from aliasing because high 
 Below are results of a tilted checker board on different pixel sampling and level sampling methods.
 </p>
 
+<img src="screenshot_2-21_20-48-29.png" width="500">
+<img src="screenshot_2-21_20-48-43.png" width="500">
+
 <p>L_ZERO and P_NEAREST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; L_ZERO and P_LINEAR</p>
+
+<img src="screenshot_2-21_20-48-55.png" width="500">
+<img src="screenshot_2-21_20-48-59.png" width="500">
+
 <p>L_NEAREST and P_NEAREST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; L_NEAREST and P_LINEAR</p>
 
 <p>
