@@ -92,14 +92,14 @@ Below are results of a tilted checker board on different pixel sampling and leve
 </p>
 
 <img src="screenshot_2-21_20-48-29.png" width="500">
+<p>L_ZERO and P_NEAREST</p> 
 <img src="screenshot_2-21_20-48-43.png" width="500">
-
-<p>L_ZERO and P_NEAREST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; L_ZERO and P_LINEAR</p>
+<p>L_ZERO and P_LINEAR</p>
 
 <img src="screenshot_2-21_20-48-55.png" width="500">
+<p>L_NEAREST and P_NEAREST<p/> 
 <img src="screenshot_2-21_20-48-59.png" width="500">
-
-<p>L_NEAREST and P_NEAREST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; L_NEAREST and P_LINEAR</p>
+<p>L_NEAREST and P_LINEAR</p>
 
 <p>
 We now have three techniques to improve screen quality differently: Pixel Sampling, Level Sampling, and Supersampling. Pixel Sampling is relatively low in memory usage compared to Level Sampling (store additional texture images) and Supersampling (sample buffer increases linear to sample rate). For speed, Bilinear filtering does 4 times the work compared to Nearest Neighbor. The speed between Level Sampling methods varies. L_ZERO and L_NEAREST are similar while L_LINEAR is 2x slower as it uses 2 Mipmaps. Supersampling slows linearly to its sample rate. Nearest Neighbor does not help with aliasing while Bilinear smooths overall jaggedness. Similarly for Level Sampling, L_ZERO performs poorly for textures further away. L_NEAREST and L_LINEAR both reduce aliasing with L_LINEAR performing better as it smoothes out jagged artifacts. Supersampling does not really help with textures further away but anti aliases with edges and shapes.
