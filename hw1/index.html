@@ -8,6 +8,10 @@
 <!-- Link at the very top -->
 <p><a href="https://cal-cs184-student.github.io/hw-webpages-alexwzhu/"></a></p>
 
+<h2>Overview</h2>
+<p>In this homework, I built a rasterizer that could render SVG files. The system is able to support Triangle Rasterization, Supersampling, Barycentric Coordinates for color interpolation, Texture Mapping, and also Level Sampling with Mipmapping. 
+</p>
+    
 <h2>task 1</h2>
 
 <p>
@@ -15,6 +19,10 @@ In my own words, rasterizing a triangle is applying a function, to some group of
 </p>
 
 <img src="screenshot_2-20_23-42-54.png" width="600">
+<p>The above image shows that triangles are able to be rendered correctly and filled with a solid color.</p>
+<p style="text-decoration: underline;">Difficulties</p>
+<p>My bounding boxes were missing a tiny number of pixels but were, for the most part, accurate. I resolved this by using floor and ceil operations to ensure I had the exact bounding box. 
+</p>
 
 <h2>task 2</h2>
 
@@ -30,15 +38,25 @@ Supersampling is useful as it reduces jagged artifacts which are a result of sim
 The major changes in the rasterization pipeline that I made were in rasterize_triangle and resolve_to_framebuffer methods. Two additional loops were added to the rasterize_triangle method in order to not only loop through the pixels but also the pixel’s subpixels. The resolve_to_framebuffer method was updated to find the average pixel value given subpixel values. As stated before, the sample_buffer data structure was also updated to store the additional subpixel values.
 </p>
 <img src="screenshot_2-21_0-29-56.png" width="600">
+<p>The above image shows that triangles are able to be rendered correctly and filled with a solid color. As you can see in the zoomed in pixels above, the vertex of the triangle is much smoother compared to the result of task 1. 
+</p>
+<p style="text-decoration: underline;">Difficulties</p>
+<p>I had a bit of difficulty deriving the sample indices which caused some random color artifacts. I was able to resolve this by reading through slides and ensuring my calculations were correct. 
+</p>
+
     
 <h2>Task 3</h2>
-
+<p>Here, I implemented hierarchical transformations. This allows SVG elements to inherit transformation from parents. Each SVG element stores its own local transformation matrix. This matrix is multiplied with transformations passed down from parents.
+</p>
+<img src="screenshot_2-21_22-38-20.png" width="500">
+<p>The correctly rendered robot_svg</p>
+    
 <img src="screenshot_2-21_15-53-24.png" width="500">
 
 <p>
 I tried to make the cubeman perform a tree yoga pose where its arms are going up and one of its legs is bent inside.
 </p>
-
+    
 <h2>Task 4</h2>
 
 <p>
@@ -55,6 +73,9 @@ This triangle has a red colored top vertex, a green colored left vertex and a bl
 
 <p>
 svg/basic/test7.svg
+</p>
+<p style="text-decoration: underline;">Difficulties</p>
+<p>I had a bit of difficulty understanding what exactly Barycentric Coordinates were and how they were derived. I was able to resolve this by looking back at the  area ratios within triangles method of calculating Barycentric Coordinates. This allowed me to understand the math and intuition behind Barycentric Coordinates.
 </p>
 
 <h2>Task 5</h2>
@@ -84,8 +105,6 @@ In general, the screens that used Bilinear Filtering looked a lot smoother and l
 <p>
 Without level sampling, textures further away suffer from aliasing because high frequency detail gets undersampled. In other words, many texels get compressed into one pixel on the screen. Level Sampling using Mipmaps helps resolve this issue. Mipmaps are downscaled versions of the texture image. For example, if the original texture image is 24x24, there will be Mipmaps of size 12x12, 6x6, 3x3, etc… Level sampling chooses which of these Mipmaps to use for texture mapping baked on how much the texture shrinks on screen. If a texture is more compressed, use a more downsized Mipmap and vice versa. In code, I implemented this system by finding how fast texture coordinates change across screen space. Depending on the sampling mode, I choose a Mipmap to sample from and continue with the sampling methods from Task 5.
 </p>
-
-<p>advantages</p>
 
 <p>
 Below are results of a tilted checker board on different pixel sampling and level sampling methods.
