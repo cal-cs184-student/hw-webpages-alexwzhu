@@ -63,16 +63,16 @@ svg/basic/test7.svg
 Because a screen is discrete and not continuous, a subset of pixels must be chosen from the original image to display on the screen. This process is called pixel sampling. My implementation of pixel sampling for texture mapping involves finding the barycentric weights for each subpixel and then finding the corresponding coordinate on the texture image. Since the texture image is discrete, two sampling methods are used to choose the subpixels corresponding color from the texture image. Nearest Neighbor simply finds the closest texel to the subpixel’s corresponding texture image coordinate. It uses this texel’s color as the pixels final color on the screen. Bilinear Filtering blends the four texels that surround the subpixel’s corresponding texture image coordinate. The final pixel color on the screen is a weighted average of those four texels. The result is a much smoother pixel and continuous looking image. Below are some screenshots of screens that used different sampling rates with different sampling methods.
 </p>
 
-<img src="screenshot_2-21_18-52-13.png" width="500">
+<img src="screenshot_2-21_18-52-13.png" width="300">
 <p><i>nearest neighbor at sample rate of 1</i></p>
 
-<img src="screenshot_2-21_18-52-17.png" width="500">
+<img src="screenshot_2-21_18-52-17.png" width="300">
 <p><i>bilinear filtering at sample rate of 1</i></p>
 
-<img src="screenshot_2-21_18-52-7.png" width="500">
+<img src="screenshot_2-21_18-52-7.png" width="300">
 <p><i>nearest neighbor at sample rate of 16</i></p>
 
-<img src="screenshot_2-21_18-52-9.png" width="500">
+<img src="screenshot_2-21_18-52-9.png" width="300">
 <p><i>bilinear filtering at sample rate of 16</i></p>
 
 <p>
