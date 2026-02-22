@@ -45,7 +45,7 @@ I tried to make the cubeman perform a tree yoga pose where its arms are going up
 I think of Barycentric Coordinates as a system that allows us to represent any point in a triangle with three scalars weights. Each of these weights indicates how “close” the pixel is to one of the triangle’s vertices. These weights enable something called attribute interpolation - a method that fills in the in between values of some object. Take for example the triangle below.
 </p>
 
-<img src="screenshot_2-21_15-53-24.png" width="500">
+<img src="screenshot_2-21_16-36-23.png" width="500">
 
 <p>
 This triangle has a red colored top vertex, a green colored left vertex and a blue colored right vertex. Given a pixel inside this triangle, you can calculate the pixel’s color by doing a weighted calculation of its barycentric weights and each weight’s respective vertice’s color. For example, a pixel in the bottom left of the triangle would have a heavier weight corresponding to the green colored vertex - resulting in a more green pixel value. The pixel in the middle of the triangle would be colored equal parts red, green, and blue.
