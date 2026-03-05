@@ -95,8 +95,12 @@
 		</figure>
 
 		<h3>Part 2: Bezier surfaces with separable 1D de Casteljau</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+		Casteljiau’s algorithm extends from Bezier curves to Bezier surfaces by applying the same 1D interpolation in both directions. For a Bezier surface, the control points are arranged in a 2D grid rather than just a line. The goal is to evaluate a point on the surface at two parameters (u, v) rather than just 1 parameter t. You treat each row of control points as its own Bezier curve problem and apply Casteljiau with parameter u. This produces a set of new intermediate points which forms another 1D Bezier curve which is evaluated again using Casteljiau’s with parameter value v. The result is a single point that lies on the Bezier surface. In my implementation, I reused the same interpolation logic from part 1 on a Vector3D object in BezierPatch::evaluateStep. BezierPatch::evaluate1D repeatedly calls evaluateStep to get the last remaining point. Finally, BezierPatch::evaluate(u, v) uses evaluate1D to find the position on the Bezier surface at (u, v).
+		<figure>
+			<img src="part2.png" alt="" style="width:50%"/>
+			<figcaption>Snapshot of teapot.</figcaption>
+		</figure>
+			
 		<h2>Section II: Triangle Meshes and Half-Edge Data Structure</h2>
 
 		<h3>Part 3: Area-weighted vertex normals</h3>
