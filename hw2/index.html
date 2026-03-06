@@ -104,7 +104,22 @@
 		<h2>Section II: Triangle Meshes and Half-Edge Data Structure</h2>
 
 		<h3>Part 3: Area-weighted vertex normals</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		The goal of part 3 is to achieve smooth shading across a given mesh. Prior to part 3, each triangle was shaded separately which resulted in a sort of blocky and unrealistic look. To achieve smooth shading, we compute a normal vector at each vertex through averaging the normals of all the triangles that touch that specific vertex. Vertex::normal, the function implemented in this part, returns an approximate unit normal given some vertex. To implement this, I used the half-edge structure to “walk” around all the faces connected to the given vertex. For each triangle touching the vertex, I compute the face normal by the cross product of two edges. I then weight this calculated normal by the triangle’s area, sum all these normals together, and normalize the summed result. The final result is the return value of Vertex::normal. I ran into some issues with treating iterators like pointers. For example, I tried to do boolean checks with iterators, like you can with booleands, which did not work as iterators aren’t nullable. As a result, I had to remove any boolean checks with iterators and simply use the iterator’s methods.  
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="p3.1real.png" width="400px"/>
+				  <figcaption>Teapot shading without vertex normal.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="p3.2.png" width="400px"/>
+				  <figcaption>Teapot shading with vertex normal.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 
 		<h3>Part 4: Edge flip</h3>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
