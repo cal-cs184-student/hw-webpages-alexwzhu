@@ -169,8 +169,50 @@
 		</div>
 			
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
+		<p>My implementation for part 6 loop subdivision follows 2 phases: computing targets and then changing the mesh. For each original vertex, I walk around its one-ring with halfedges. I compute a weighted average by counting each vertex’s neighboring vertices and summing their positions. This value is stored in Vertex::newPosition. I then compute the midpoint target for each original edge from the edge’s two endpoints plus the two opposite triangle vertices. I use the following formula for this step: </p>
+		
+		<li>\( 3/8 * (A + B) + 1/8 * (C + D) \)</li>
+		<p>Before splitting, I saved the original edge iterators in a vector. This was a crucial step because calling splitEdge adds new edges. I then split each edge in this vector of original edges. After splitting each edge, the newly created vertex’s newPosition value is set to the precomputed midpoint target. This new vertex is also marked as new. I then flip only edges that connect an old and a new vertex. Finally, every vertex’s position is set to the value previously stored in Vertex::newPosition. </p>
+		<p>Debugging/Issues: The largest issue I ran into was splitEdge creating new edges and changing connectivity. This possibly led to newly created edges getting revisited and being split again. This is why I introduced the vector of original vectors. This way, I could iterate through this vector and ensure that there is exactly one split for each original edge. </p>
+		<p>Mesh behavior after loop subdivision: I noticed that loop subdivision will force sharp corners and edges to get rounded off after upsampling. Take for instance the series of subdivisions below. </p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="p6.1.png" width="300px"/>
+				  <figcaption>Original image.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="p6.2.png" width="300px"/>
+				  <figcaption>After subdivision.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="p6.3.png" width="300px"/>
+				  <figcaption>After another subdivision.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		<p>I was able to reduce this by pre-splitting some of the edges. Below, I add a bunch of edges to the top left half of the original square. I find that adding supporting edges near edges or sharp corners can help preserve the original shape a bit longer. </p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="p6.4.png" width="300px"/>
+				  <figcaption>Original image.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="p6.5.png" width="300px"/>
+				  <figcaption>After subdivision.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="p6.6.png" width="300px"/>
+				  <figcaption>After another subdivision.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+			
 		</div>
 	</body>
 </html>
