@@ -211,6 +211,25 @@
 			  </tr>
 			</table>
 		</div>
+		<p>In order to alleviate the asymmetric behavior in repeated subdivisions, I pre-processed the cube by splitting each face once to create a symmetric pattern. The original cube configuration introduced a sort of bias to each subdivision update as the faces just had one diagonal edge. Because the actual loop subdivision update depends on neighborhood connectivity, a one-ring structure that is more uniform will reduce the directional bias that causes asymmetry. Below are results of subdivision on a symmetrical pre-split cube. </p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="sym1.png" width="300px"/>
+				  <figcaption>Split edge once for each face.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="sym2.png" width="300px"/>
+				  <figcaption>After subdivision.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="sym3.png" width="300px"/>
+				  <figcaption>After another subdivision.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 			
 		</div>
 	</body>
