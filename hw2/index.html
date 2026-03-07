@@ -106,6 +106,7 @@
 		<h3>Part 3: Area-weighted vertex normals</h3>
 		The goal of part 3 is to achieve smooth shading across a given mesh. Prior to part 3, each triangle was shaded separately which resulted in a sort of blocky and unrealistic look. To achieve smooth shading, we compute a normal vector at each vertex through averaging the normals of all the triangles that touch that specific vertex. Vertex::normal, the function implemented in this part, returns an approximate unit normal given some vertex. To implement this, I used the half-edge structure to “walk” around all the faces connected to the given vertex. For each triangle touching the vertex, I compute the face normal by the cross product of two edges. I then weight this calculated normal by the triangle’s area, sum all these normals together, and normalize the summed result. The final result is the return value of Vertex::normal. I ran into some issues with treating iterators like pointers. For example, I tried to do boolean checks with iterators, like you can with booleands, which did not work as iterators aren’t nullable. As a result, I had to remove any boolean checks with iterators and simply use the iterator’s methods.  
 
+			
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -122,7 +123,26 @@
 		</div>
 
 		<h3>Part 4: Edge flip</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		My approach for implementing edge flips is as follows. Given some valid edge - cannot flip boundary edges - I identified the 4 vertices, 2 faces, and 6 halfedges belonging to the two adjacent triangles connected by the given edge. I then flipped the edge by rewiring the edge to the 2 other vertices that were not connected by the original given edge. Issues: An issue I ran into was only updating the flipped edge and ignoring all surrounding connectivity. Because of this, the other halfedges belonging to the two adjacent triangles still referenced the old configuration. This led to program crashes when the program attempted to follow incorrect pointers as well as incorrect traversals. To fix this, I had to completely revamp the local connectivities. All 6 of the halfedges and their next, vertex, edge, and face pointers had to reflect the new configuration of the triangles after the edge flip. 
+		<p>The snapshots below showcase results of edge flips on teapot image.</p>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="p4.1.png" width="200px"/>
+				  <figcaption>Original iamge.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="p4.2.png" width="200px"/>
+				  <figcaption>One flip.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="p4.3.png" width="200px"/>
+				  <figcaption>Another flip.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 
 		<h3>Part 5: Edge split</h3>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
