@@ -126,7 +126,23 @@ e_1 = \mathbf{p}_2 - \mathbf{p}_1,\quad e_2 = \mathbf{p}_3 - \mathbf{p}_1
 		</div>
 
 		<h3>Part 4: Edge flip</h3>
-		My approach for implementing edge flips is as follows. Given some valid edge (cannot flip boundary edges), I identified the 4 vertices, 2 faces, and 6 halfedges belonging to the two adjacent triangles connected by the given edge. I then flipped the edge by rewiring the edge to the 2 other vertices that were not connected by the original given edge. Issues: An issue I ran into was only updating the flipped edge and ignoring all surrounding connectivity. Because of this, the other halfedges belonging to the two adjacent triangles still referenced the old configuration. This led to program crashes when the program attempted to follow incorrect pointers as well as incorrect traversals. To fix this, I had to completely revamp the local connectivities. All 6 of the halfedges and their next, vertex, edge, and face pointers had to reflect the new configuration of the triangles after the edge flip. 
+		<p>
+		My approach for implementing edge flip was to operate on the local neighborhood of one non-boundary edge. 
+		Given a valid edge, I first identified the 4 vertices, 2 adjacent faces, and 6 halfedges involved in the two incident triangles. 
+		The flip replaces the original diagonal with the other diagonal, i.e., it reconnects the two opposite vertices that were previously not directly connected.
+		</p>
+		<p>
+		A key implementation detail is that flipping is not just changing one edge endpoint pair. 
+		I had to reassign all local halfedge connectivity so the neighborhood remains consistent: each of the 6 halfedges needs correct
+		<code>next</code>, <code>twin</code>, <code>vertex</code>, <code>edge</code>, and <code>face</code> references. 
+		I also updated representative pointers on mesh elements (<code>face->halfedge</code>, <code>vertex->halfedge</code>, and <code>edge->halfedge</code>) to match the new configuration.
+		</p>
+		<p>
+		The main bug I hit was initially updating only the flipped edge while leaving neighboring halfedges unchanged. 
+		That left stale references to the old topology, which caused invalid traversals and occasional crashes. 
+		Rewiring the entire local neighborhood fixed this.
+		</p>
+			
 		<p>The snapshots below showcase results of edge flips on teapot image.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -148,9 +164,32 @@ e_1 = \mathbf{p}_2 - \mathbf{p}_1,\quad e_2 = \mathbf{p}_3 - \mathbf{p}_1
 		</div>
 
 		<h3>Part 5: Edge split</h3>
-		My approach for implementing edge splits is as follows. Given some valid edge - cannot flip boundary edges - I identified the 4 vertices, 2 faces, and 6 halfedges belonging to the two adjacent triangles connected by the given edge. I then created the new mesh elements to complete the split. These new elements included a new vertex (which was placed at the midpoint of the given edge), 3 new edges, 2 new faces, and 6 new halfedges. The original edge was reused as one of the 2 edges connected by the new midpoint vertex. I then rewired the connectivity so that the 2 original triangles connected by the given edge were replaced by 4 smaller triangles. This involved reassigning next pointers so that each of the 4 new faces form a correct 3-halfedge cycle, updating vertex pointers so they point from correct source vertex, and tweaking face and edge pointers so that each halfedge belonged to the correct face and each halfedge pair referenced the right edge. 
+		<p>
+		My approach for implementing edge split was to again start from a valid non-boundary edge and gather its local neighborhood
+		(4 vertices, 2 faces, and 6 existing halfedges). 
+		Splitting this edge inserts one midpoint vertex and replaces the two original triangles with four smaller triangles.
+		</p>
+		<p>
+		Topologically, each split creates:
+		1 new vertex, 3 new edges, 2 new faces, and 6 new halfedges.
+		I place the new vertex at the midpoint of the original edge:
+		\[
+		\mathbf{m} = \frac{\mathbf{b} + \mathbf{c}}{2}.
+		\]
+		The original edge is reused as one of the two edges along the original direction, while the new elements complete the 4-triangle configuration.
+		</p>
+		<p>
+		After allocation, I rewired connectivity by updating all relevant pointers so each new face forms a valid 3-halfedge cycle, each halfedge points to the correct source vertex, and each halfedge pair references the correct edge/face relationship.
+		I then updated representative pointers on vertices, faces, and edges.
+		</p>
+		<p>
+		Because split introduces many new elements, pointer mistakes were easy to make. 
+		I used <code>check_for</code> heavily to verify that:
+		(1) the correct halfedges reference the new midpoint vertex, and
+		(2) each edge is referenced by exactly two halfedges.
+		These checks were essential for debugging local consistency.
+		</p>
 		
-		<p>Because edge split introduces new mesh elements, I ended up leaving some pointers incorrectly assigned. I was able to use check_for to verify the correct halfedges pointed to the newly created midpoint vertex. I also used check_for to ensure that only 2 halfedges were associated with each edge. </p>
 		<p>The snapshots below showcase results of both edge splits and edge flips on teapot image.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
