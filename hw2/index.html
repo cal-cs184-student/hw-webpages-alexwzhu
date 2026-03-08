@@ -256,39 +256,39 @@ e_1 = \mathbf{p}_2 - \mathbf{p}_1,\quad e_2 = \mathbf{p}_3 - \mathbf{p}_1
 		This guaranteed exactly one split per original edge and made the subdivision result stable.
 		</p>
 			
-		<p>Mesh behavior after loop subdivision: I noticed that loop subdivision will force sharp corners and edges to get rounded off after upsampling. Take for instance the series of subdivisions below. </p>
+		<p>Mesh behavior after loop subdivision: I noticed that loop subdivision will force sharp corners and edges to get rounded off after upsampling. Take for instance the series of loop subdivisions on the handle of the teapot. </p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="p6.1.png" width="300px"/>
+				  <img src="knob1.png" width="300px"/>
 				  <figcaption>Original image.</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="p6.2.png" width="300px"/>
+				  <img src="knob2.png" width="300px"/>
 				  <figcaption>After subdivision.</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="p6.3.png" width="300px"/>
+				  <img src="knob3.png" width="300px"/>
 				  <figcaption>After another subdivision.</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
-		<p>I was able to reduce this by pre-splitting some of the edges. Below, I add a bunch of edges to the top left half of the original square. I find that adding supporting edges near edges or sharp corners can help preserve the original shape a bit longer. </p>
+		<p>The sides of the teapot handle become noticebly rounder. I was able to reduce this by pre-splitting some of the edges. Below, I add a bunch of edges to the left side of the handle. I find that adding supporting edges near edges or sharp corners can help preserve the original shape a bit longer. As you can see, the left side of the handle preserves its edges a bit better than the right side of the handle. </p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="p6.4.png" width="300px"/>
+				  <img src="knob4.png" width="300px"/>
 				  <figcaption>Original image.</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="p6.5.png" width="300px"/>
+				  <img src="knob5.png" width="300px"/>
 				  <figcaption>After subdivision.</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="p6.6.png" width="300px"/>
+				  <img src="knob6.png" width="300px"/>
 				  <figcaption>After another subdivision.</figcaption>
 				</td>
 			  </tr>
