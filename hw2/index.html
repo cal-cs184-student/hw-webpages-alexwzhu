@@ -211,10 +211,52 @@ e_1 = \mathbf{p}_2 - \mathbf{p}_1,\quad e_2 = \mathbf{p}_3 - \mathbf{p}_1
 		</div>
 			
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
-		<p>My implementation for part 6 loop subdivision follows 2 phases: computing targets and then changing the mesh. For each original vertex, I walk around its one-ring with halfedges. I compute a weighted average by counting each vertex’s neighboring vertices and summing their positions. This value is stored in Vertex::newPosition. I then compute the midpoint target for each original edge from the edge’s two endpoints plus the two opposite triangle vertices. I use the following formula for this step: </p>
+		<p>
+		My Loop subdivision implementation uses a staged pipeline: (1) compute all target positions on the original mesh, (2) update topology, and (3) commit final positions.
+		This separation prevents mixing old and newly modified neighborhoods during computation.
+		</p>
 		
-		<p>Before splitting, I saved the original edge iterators in a vector. This was a crucial step because calling splitEdge adds new edges. I then split each edge in this vector of original edges. After splitting each edge, the newly created vertex’s newPosition value is set to the precomputed midpoint target. This new vertex is also marked as new. I then flip only edges that connect an old and a new vertex. Finally, every vertex’s position is set to the value previously stored in Vertex::newPosition. </p>
-		<p>Debugging/Issues: The largest issue I ran into was splitEdge creating new edges and changing connectivity. This possibly led to newly created edges getting revisited and being split again. This is why I introduced a vector of original vectors. This way, I could iterate through this vector and ensure that there is exactly one split for each original edge. </p>
+		<p>
+		First, for each original vertex, I traverse its one-ring neighbors with halfedges, sum neighbor positions, and compute the Loop vertex update:
+		\[
+		\mathbf{v}' = (1 - n u)\mathbf{v} + u \sum_{i=1}^{n}\mathbf{v}_i,
+		\quad
+		u =
+		\begin{cases}
+		\frac{3}{16}, & n = 3 \\
+		\frac{3}{8n}, & n > 3
+		\end{cases}
+		\]
+		where \(n\) is the number of neighboring vertices. I store this in <code>Vertex::newPosition</code> and mark original vertices with <code>isNew = false</code>.
+		</p>
+		
+		<p>
+		Second, for each original edge with endpoints \(A,B\) and opposite vertices \(C,D\), I compute the Loop midpoint target
+		\[
+		\mathbf{m}' = \frac{3}{8}(A+B) + \frac{1}{8}(C+D),
+		\]
+		and store it in <code>Edge::newPosition</code>.
+		</p>
+		
+		<p>
+		Third, I split only the original edges by first saving a snapshot:
+		<code>std::vector&lt;EdgeIter&gt; originalEdges</code>.
+		This is critical because <code>splitEdge</code> creates new edges; iterating directly over a growing edge list can cause accidental re-splitting in the same pass.
+		For each split edge, I mark the inserted midpoint vertex as new and assign:
+		<code>m-&gt;newPosition = e-&gt;newPosition</code>.
+		</p>
+		
+		<p>
+		Next, I flip only edges marked as new that connect one old vertex and one new vertex.
+		This restores the standard Loop connectivity pattern after splitting.
+		Finally, I copy <code>newPosition</code> into <code>position</code> for all vertices.
+		</p>
+		
+		<p>
+		Debugging note: the most important fix was splitting from a fixed snapshot of original edges instead of traversing the live edge container while it was being modified.
+		This guaranteed exactly one split per original edge and made the subdivision result stable.
+		</p>
+			
 		<p>Mesh behavior after loop subdivision: I noticed that loop subdivision will force sharp corners and edges to get rounded off after upsampling. Take for instance the series of subdivisions below. </p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -253,7 +295,10 @@ e_1 = \mathbf{p}_2 - \mathbf{p}_1,\quad e_2 = \mathbf{p}_3 - \mathbf{p}_1
 			  </tr>
 			</table>
 		</div>
-		<p>In order to alleviate the asymmetric behavior in repeated subdivisions, I pre-processed the cube by splitting each face once to create a symmetric pattern. The original cube configuration introduced a sort of bias to each subdivision update as the faces just had one diagonal edge. Because the actual loop subdivision update depends on neighborhood connectivity, a one-ring structure that is more uniform will reduce the directional bias that causes asymmetry. Below are results of subdivision on a symmetrical pre-split cube. </p>
+		<p>
+		To reduce the asymmetry that appeared after repeated subdivision, I pre-processed the cube by splitting each face once in a symmetric pattern. In the original cube triangulation, each face had a single diagonal, which introduced directional bias into the local connectivity. Because Loop subdivision updates depend on one-ring neighborhood structure (not just vertex positions), this bias accumulates over iterations and appears as visible asymmetry. After symmetric pre-splitting, the one-ring neighborhoods are more uniform, so updates are applied more evenly and the subdivided cube remains noticeably more symmetric. The images below show results on this symmetrically pre-split cube.
+		</p>
+
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
