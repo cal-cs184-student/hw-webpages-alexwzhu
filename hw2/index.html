@@ -43,7 +43,7 @@
 		-->
 
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
+		In this homework, I implemented some geometric modeling topics used for building Bezier curves and manipulating triangle meshes. The first section of the homework involves using de Casteljau's algorithm to evaluate points on a Bezier curve. My implementation was then extended to evaluate Bezier surfaces. The second section focused on mesh processing using halfedge structures. I implemented smooth shading, edge flips and splits, and loop subdivision. For the Bezier curve/surface implementation, I thought it was interesting how the 1D de Casteljau's algorithm could be used in a 2D context to evaluate points on a Bezier surface. From the later half of the homework, I learend that subdivision quality depends heavily on mesh connectivity. Different triangulation configurations on the same shape can produce drastically different behavior. I learned more generally from this the homework the importance of breaking down problems into subproblems: saving temporary states, modifying topology, committing positions. Implementing each problem in distinct stages made debugging so much easier.
 
 		<h2>Section I: Bezier Curves and Surfaces</h2>
 
