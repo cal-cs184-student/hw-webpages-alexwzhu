@@ -211,7 +211,7 @@ e_1 = \mathbf{p}_2 - \mathbf{p}_1,\quad e_2 = \mathbf{p}_3 - \mathbf{p}_1
 			
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
 		<p>
-		My Loop subdivision implementation uses a staged pipeline: (1) compute all target positions on the original mesh, (2) update topology, and (3) commit final positions.
+		My Loop subdivision implementation uses the following steps: (1) compute all target positions on the original mesh, (2) update topology, and (3) commit final positions.
 		This separation prevents mixing old and newly modified neighborhoods during computation.
 		</p>
 		
