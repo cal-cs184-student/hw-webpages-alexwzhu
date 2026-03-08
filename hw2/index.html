@@ -104,8 +104,11 @@
 		<h2>Section II: Triangle Meshes and Half-Edge Data Structure</h2>
 
 		<h3>Part 3: Area-weighted vertex normals</h3>
-		<p>The goal of part 3 is to achieve smooth shading across a given mesh. Prior to part 3, each triangle was shaded separately which resulted in a sort of blocky and unrealistic look. To achieve smooth shading, we compute a normal vector at each vertex through averaging the normals of all the triangles that touch that specific vertex. Vertex::normal, the function implemented in this part, returns an approximate unit normal given some vertex. To implement this, I used the half-edge structure to “walk” around all the faces connected to the given vertex. For each triangle touching the vertex, I compute the face normal by the cross product of two edges. I then weight this calculated normal by the triangle’s area, sum all these normals together, and normalize the summed result. The final result is the return value of Vertex::normal. I ran into some issues with treating iterators like pointers. For example, I tried to do boolean checks with iterators, like you can with booleans, which did not work as iterators aren’t nullable. As a result, I had to remove any boolean checks with iterators and simply use the iterator’s methods.</p>  
-
+		<p>The goal of Part 3 is to compute per-vertex normals for smooth shading. Without this, the renderer uses per-face normals, which creates a faceted appearance. In Vertex::normal(), I initialize an accumulator N = (0,0,0) and use a halfedge iterator to circulate around the one-ring of the current vertex. Starting from halfedge(), I repeatedly advance with hedge = hedge->twin()->next(), which moves to the next face incident to the same vertex. For each non-boundary face, I form two local edge vectors from the current vertex,</p>
+		\[
+e_1 = \mathbf{p}_2 - \mathbf{p}_1,\quad e_2 = \mathbf{p}_3 - \mathbf{p}_1
+\]
+		<p>and add cross(e1, e2) to N. This cross product contributes a direction equal to the face normal and a magnitude proportional to triangle area, so summing these terms gives an area-weighted average automatically (larger triangles influence the result more). After completing the loop (detected when the iterator returns to the start halfedge), I normalize N and return N.unit(). I also skip boundary faces via if (!f->isBoundary()) so invalid boundary geometry does not affect the normal computation. A key debugging point was iterator handling: halfedge iterators are not nullable booleans, so traversal must rely on explicit loop structure and iterator equality checks rather than truthy/null checks.</p>
 			
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
