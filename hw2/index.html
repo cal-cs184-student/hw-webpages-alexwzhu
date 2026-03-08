@@ -183,11 +183,10 @@ e_1 = \mathbf{p}_2 - \mathbf{p}_1,\quad e_2 = \mathbf{p}_3 - \mathbf{p}_1
 		I then updated representative pointers on vertices, faces, and edges.
 		</p>
 		<p>
-		Because split introduces many new elements, pointer mistakes were easy to make. 
+		Because split introduces many new elements, I made a bunch of tiny pointer mistakes. 
 		I used <code>check_for</code> heavily to verify that:
 		(1) the correct halfedges reference the new midpoint vertex, and
 		(2) each edge is referenced by exactly two halfedges.
-		These checks were essential for debugging local consistency.
 		</p>
 		
 		<p>The snapshots below showcase results of both edge splits and edge flips on teapot image.</p>
