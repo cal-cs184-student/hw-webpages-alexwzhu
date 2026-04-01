@@ -335,6 +335,10 @@
 			</table>
 		</div>
 
+		<p>
+			The unaccumulated images show the contribution of each individual bounce in isolation. At m=0 it's just the light source emission, m=1 is direct lighting, and m=2 onward are successively dimmer indirect bounces. The accumulated images show the running total — m=0 is the same as unaccumulated m=0, but by m=1 you already have emission plus direct lighting, and each subsequent m just adds more indirect light on top. The accumulated images converge quickly: m=2 and m=3 are already close to the final result, and m=4 and m=5 are nearly indistinguishable because each additional bounce contributes very little extra energy. The unaccumulated images make it easier to see exactly what each bounce adds, while the accumulated images show the actual rendered result you'd get at each depth setting.
+		</p>
+
 		<h3>CBbunny: Russian Roulette (1024 spp)</h3>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
