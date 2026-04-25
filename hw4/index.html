@@ -229,7 +229,7 @@
 
 		<h2>Part 3: Handling collisions with other objects</h2>
 		<p>
-			After Velot moves masses, if any of them end up inside an object just move them back out. 
+			After Verlet moves masses, if any of them end up inside an object just move them back out. 
 		</p>
 		<p>
 			<b>Sphere.</b> Given the point mass's <code>position</code> and the sphere's
@@ -521,7 +521,7 @@
 			per fragment, so it only costs a few extra texture reads. Displacement mapping gives
 			"real" geometric detail, but it is dependent on the tessellation of the underlying
 			mesh: you only have as much displacement resolution as you have vertices. This means
-			displacement correctly deforms silhouettes and casts correct parallax, but it's more
+			displacement correctly deforms silhouettes and produces correct parallax, but it's more
 			expensive and loses detail at low tessellation.
 		</p>
 
