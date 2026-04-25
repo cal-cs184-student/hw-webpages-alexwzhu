@@ -68,9 +68,7 @@
 			very local rules: three very simple Hookean spring types plus a cheap position
 			post-processing step give convincing drape and folding. Tuning parameters like
 			<code>ks</code>, <code>density</code>, and <code>damping</code> really highlighted the
-			trade-offs between stiffness, inertia, and stability. On the shader side, it was fun to
-			see how much perceived geometric detail you can add with just a height map and a little
-			TBN-space math, without changing any of the underlying mesh.
+			trade-offs between stiffness, inertia, and stability. 
 		</p>
 
 		<h2>Part 1: Masses and springs</h2>
@@ -93,11 +91,7 @@
 			<b>Springs.</b> After all masses are placed, I iterate over the grid again and add
 			springs using pointer arithmetic into the point-mass array:
 		</p>
-		<ul>
-			<li><b>Structural</b>: each mass to its left neighbor and to the mass directly above.</li>
-			<li><b>Shearing</b>: each mass to its upper-left and upper-right diagonal neighbors.</li>
-			<li><b>Bending</b>: each mass to the mass two cells to the left and to the mass two cells up.</li>
-		</ul>
+		
 		<p>
 			Edge cases are handled by simple bounds checks on <code>i</code> and <code>j</code> so
 			that no out-of-grid connections are created. Rest length is computed automatically by the
@@ -113,21 +107,21 @@
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/part1/part1.1.png" width="400px"/>
-				  <figcaption>All constraints enabled (structural + shearing + bending).</figcaption>
+				  <figcaption>All constraints enabled.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part1/part1.2.png" width="400px"/>
-				  <figcaption>Shearing disabled — only axis-aligned structural and bending edges remain.</figcaption>
+				  <figcaption>Shearing disabled.</figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/part1/part1.3.png" width="400px"/>
-				  <figcaption>Only shearing enabled — just the diagonals are visible.</figcaption>
+				  <figcaption>Only shearing enabled.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part1/part1.4.png" width="400px"/>
-				  <figcaption>All constraints disabled — no springs are drawn.</figcaption>
+				  <figcaption>All constraints disabled.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -136,7 +130,7 @@
 		<h2>Part 2: Simulation via numerical integration</h2>
 		<p>
 			In Part 2, I implemented <code>Cloth::simulate</code>, which advances the cloth one
-			timestep. The work is broken into three stages.
+			timestep.
 		</p>
 		<p>
 			<b>Accumulating forces.</b> Each simulation step I reset every point mass's force to the
@@ -167,21 +161,19 @@
 
 		<p>
 			<b>Effect of <code>ks</code>.</b> Increasing <code>ks</code> makes the cloth behave as a
-			much stiffer sheet: it resists stretching strongly, so the cloth has barely any sag
-			under gravity at rest. Very low <code>ks</code> lets the cloth stretch aggressively
-			under its own weight and the resulting drape is exaggerated; the Provot cap becomes
-			critical here to prevent super-elastic blowup.
+			much stiffer sheet. Very low <code>ks</code> lets the cloth stretch aggressively
+			under its own weight and the resulting drape is exaggerated.
 		</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/part2/ks_low.png" width="400px"/>
-				  <figcaption>Low <code>ks</code>: the cloth stretches dramatically under gravity, sagging deep between the pinned corners.</figcaption>
+				  <figcaption>Low <code>ks</code>.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part2/ks_high.png" width="400px"/>
-				  <figcaption>High <code>ks</code>: the cloth behaves much more like a stiff sheet with very little sag.</figcaption>
+				  <figcaption>High <code>ks</code>.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -190,19 +182,18 @@
 		<p>
 			<b>Effect of <code>density</code>.</b> Increasing density scales the per-mass weight
 			directly; under the same <code>ks</code>, a heavier cloth sags more because gravity
-			forces scale linearly with mass while spring restoring forces do not. Low density looks
-			like a very light silk; high density looks like a heavy rug.
+			forces scale linearly with mass while spring restoring forces do not. 
 		</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/part2/density_low.png" width="400px"/>
-				  <figcaption>Low density: the cloth is light and barely sags at rest.</figcaption>
+				  <figcaption>Low density.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part2/density_high.png" width="400px"/>
-				  <figcaption>High density: the cloth is heavier and droops noticeably more.</figcaption>
+				  <figcaption>High density.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -210,20 +201,19 @@
 
 		<p>
 			<b>Effect of <code>damping</code>.</b> Very low damping lets the cloth oscillate for a
-			long time — it swings back and forth like an underdamped spring system. Very high
-			damping kills velocity almost immediately and the cloth falls slowly, essentially
-			gliding into rest without any visible oscillation.
+			long time - it swings back and forth like an underdamped spring system. Very high
+			damping kills velocity almost immediately and the cloth falls slowly.
 		</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/part2/damping_low.png" width="400px"/>
-				  <figcaption>Low damping: the cloth oscillates, captured mid-swing.</figcaption>
+				  <figcaption>Low damping.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part2/damping_high.png" width="400px"/>
-				  <figcaption>High damping: the cloth descends slowly and reaches rest with no visible oscillation.</figcaption>
+				  <figcaption>High damping.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -235,14 +225,11 @@
 		</p>
 		<figure>
 			<img src="images/part2/part2.1.png" alt="pinned4 rest state" style="width:60%"/>
-			<figcaption>Final <code>pinned4.json</code> rest shape with all four corners pinned.</figcaption>
 		</figure>
 
 		<h2>Part 3: Handling collisions with other objects</h2>
 		<p>
-			Collision response against static primitives is position-based: after Verlet, if a point
-			mass is inside or has passed through an object, I nudge it back just outside and scale
-			down its implied velocity via the object's friction.
+			After Velot moves masses, if any of them end up inside an object just move them back out. 
 		</p>
 		<p>
 			<b>Sphere.</b> Given the point mass's <code>position</code> and the sphere's
@@ -252,7 +239,7 @@
 			<code>tangent - last_position</code>. The new position is
 			<code>last_position + (1 - friction) * correction</code>. This both places the point on
 			the sphere surface and reduces the effective velocity produced by Verlet on the next
-			step, which gives the characteristic settling behavior of cloth draped over a sphere.
+			step.
 		</p>
 		<p>
 			<b>Plane.</b> I detect a plane crossing by comparing the signed distances of
@@ -273,25 +260,24 @@
 			<b>Cloth on sphere for varying <code>ks</code>.</b> Low <code>ks</code> gives a very
 			soft, conforming drape with many small folds around the sphere. At the default
 			<code>ks = 5000</code>, the cloth takes a natural rest shape with moderate wrinkling.
-			With very high <code>ks</code> the cloth becomes stiff and resists bending, so it hangs
-			more rigidly with fewer folds and a less conforming silhouette around the sphere.
+			With very high <code>ks</code> the cloth becomes stiff and resists bending.
 		</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/part3/part3.500.png" width="400px"/>
-				  <figcaption><code>ks = 500</code>: soft, very conforming drape with lots of small folds.</figcaption>
+				  <figcaption><code>ks = 500</code>.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part3/part3.5000.png" width="400px"/>
-				  <figcaption><code>ks = 5000</code>: default behavior, medium-stiff drape.</figcaption>
+				  <figcaption><code>ks = 5000</code>.</figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;" colspan="2">
 				  <img src="images/part3/part3.50000.png" width="400px"/>
-				  <figcaption><code>ks = 50000</code>: very stiff; cloth resists bending and hangs more rigidly.</figcaption>
+				  <figcaption><code>ks = 50000</code>.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -303,13 +289,12 @@
 		</p>
 		<figure>
 			<img src="images/part3/at_rest.png" alt="Cloth at rest on the plane" style="width:60%"/>
-			<figcaption>Cloth at rest on the plane primitive.</figcaption>
 		</figure>
 
 		<h2>Part 4: Handling self-collisions</h2>
 		<p>
 			Brute-force pairwise self-collision would be \(O(n^2)\) in the number of point masses.
-			To make it tractable for a 50&times;50 grid, I used uniform spatial hashing.
+			To make it more controllable for a 50&times;50 grid, I used uniform spatial hashing.
 		</p>
 		<p>
 			<b><code>hash_position</code>.</b> I partition 3D space into rectangular boxes of
@@ -334,8 +319,7 @@
 			average the corrections over the number of colliding candidates and divide once more by
 			<code>simulation_steps</code>, so that across a full frame the cumulative correction is
 			on the order of <code>2 * thickness</code>, not
-			<code>simulation_steps * 2 * thickness</code>. This smoothing is what keeps the cloth
-			from exploding outward.
+			<code>simulation_steps * 2 * thickness</code>.
 		</p>
 
 		<p>
@@ -386,11 +370,11 @@
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/part4/lower_ks.png" width="400px"/>
-				  <figcaption>Lower <code>ks</code>: more compliant cloth, wrinklier pile.</figcaption>
+				  <figcaption>Lower <code>ks</code>.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part4/higher_ks.png" width="400px"/>
-				  <figcaption>Higher <code>ks</code>: stiffer cloth, larger and smoother folds.</figcaption>
+				  <figcaption>Higher <code>ks</code>.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -401,18 +385,18 @@
 			down with less weight and the pile keeps clearer, rounder rolls in its rest shape.
 			Higher density adds mass uniformly, which means more inertia during the fall and
 			heavier compaction once the cloth lands — the layers crush down on each other and the
-			pile becomes flatter and more chaotic, with many small wrinkles.
+			pile becomes flatter and more chaotic.
 		</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/part4/lower_density.png" width="400px"/>
-				  <figcaption>Lower density: lighter cloth, cleaner rolled folds.</figcaption>
+				  <figcaption>Lower density.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part4/higher_density.png" width="400px"/>
-				  <figcaption>Higher density: heavier cloth, flatter and more crushed pile.</figcaption>
+				  <figcaption>Higher density.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -425,10 +409,7 @@
 			which runs once per vertex and is responsible for transforming positions into clip
 			space and forwarding per-vertex attributes (normals, UVs, tangents) to the next stage,
 			and the <em>fragment shader</em>, which runs once per pixel covered by a rasterized
-			triangle and produces the final output color. Varyings declared as <code>out</code> in
-			the vertex shader are linearly interpolated across the triangle and received as
-			<code>in</code> in the fragment shader, which is how each pixel gets its own
-			interpolated normal, UV, etc.
+			triangle and produces the final output color. 
 		</p>
 
 		<p>
@@ -441,7 +422,7 @@
 			square of distance to the light. The specular term is the characteristic highlight: it
 			uses the halfway vector \(h = (l + v)/\|l+v\|\) and the surface normal, raised to a
 			shininess exponent \(p\) that controls how tight the highlight is. Larger \(p\) gives a
-			small, sharp highlight (polished metal); smaller \(p\) spreads it out (satin).
+			small, sharp highlight; smaller \(p\) spreads it out.
 		</p>
 
 		<div style="display: flex; flex-direction: column; align-items: center;">
@@ -449,21 +430,21 @@
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/part5/part5.ambient.png" width="400px"/>
-				  <figcaption>Ambient only — flat constant fill with no geometry dependence.</figcaption>
+				  <figcaption>Ambient only.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part5/part5.diffuse.png" width="400px"/>
-				  <figcaption>Diffuse only — Lambertian shading; surface brightness follows \(\max(0, n \cdot l)\).</figcaption>
+				  <figcaption>Diffuse only.</figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/part5/part5.specular.png" width="400px"/>
-				  <figcaption>Specular only — concentrated highlight from the halfway vector with \(p = 100\).</figcaption>
+				  <figcaption>Specular only.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part5/part5.blinn.png" width="400px"/>
-				  <figcaption>Full Blinn-Phong (ambient + diffuse + specular).</figcaption>
+				  <figcaption>Full Blinn-Phong.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -473,11 +454,10 @@
 			<b>Texture mapping.</b> For texture mapping, the fragment shader simply samples
 			<code>u_texture_1</code> at the interpolated UV and outputs that color. The vertex
 			shader forwards <code>in_uv</code> unchanged as <code>v_uv</code>, and GL interpolates
-			it across the triangle. I used my own custom image as <code>texture_1.png</code>.
+			it across the triangle.
 		</p>
 		<figure>
 			<img src="images/part5/part5.customtexture.png" alt="Texture shaded cloth with custom texture" style="width:55%"/>
-			<figcaption>Texture shader with a custom image mapped onto the cloth.</figcaption>
 		</figure>
 
 		<p>
@@ -508,8 +488,7 @@
 			<b>Bump mapping on the cloth and sphere.</b> On the cloth, bump mapping adds the
 			illusion of fabric weave and surface wrinkles that follow the drape. On the sphere,
 			the lighting looks visibly bumpy even though the silhouette of the sphere remains
-			perfectly smooth — a telltale sign that the geometry hasn't actually been deformed,
-			only the shading normals.
+			perfectly smooth.
 		</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -520,7 +499,7 @@
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part5/part5.bump_on_sphere.png" width="400px"/>
-				  <figcaption>Bump shader on the sphere — smooth silhouette despite the bumpy-looking shading.</figcaption>
+				  <figcaption>Bump shader on the sphere.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -529,12 +508,11 @@
 		<p>
 			<b>Displacement mapping on the sphere.</b> In contrast, the displacement shader actually
 			moves vertices outward along the surface normal by <code>h(uv) * u_height_scaling</code>,
-			so the silhouette of the sphere is no longer a perfect circle — it picks up real
-			geometric bumps along the outline.
+			so the silhouette of the sphere is no longer a perfect circle.
 		</p>
 		<figure>
 			<img src="images/part5/part5.displacement_on_sphere.png" alt="Displacement on sphere" style="width:55%"/>
-			<figcaption>Displacement shader on the sphere — note that the silhouette is now bumpy.</figcaption>
+			<figcaption>Displacement shader on the sphere.</figcaption>
 		</figure>
 
 		<p>
@@ -550,14 +528,12 @@
 		<p>
 			<b>Sphere coarseness comparison (<code>-o 16 -a 16</code> vs. <code>-o 128 -a 128</code>).</b>
 			At low tessellation, bump mapping still looks convincingly bumpy in shading but the
-			sphere's outline is visibly polygonal — the bumps are a lie over a coarse mesh.
+			sphere's outline is visibly polygonal. 
 			Displacement at the same tessellation looks noticeably worse: there aren't enough
 			vertices to represent fine height features, so the bumpy detail on the sphere surface
 			is lost and the silhouette only captures the largest height variations. At high
 			tessellation, bump mapping looks essentially identical to the low-tessellation version
-			in terms of shading detail (because the fragment shader doesn't care about the vertex
-			count). Displacement, on the other hand, finally shows its full resolution: small
-			height variations now produce real geometric bumps along the silhouette.
+			in terms of shading detail. Displacement, on the other hand, shows its full resolution.
 		</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -574,11 +550,11 @@
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="images/part5/displacement_coarse.png" width="400px"/>
-				  <figcaption>Displacement, sphere at <code>-o 16 -a 16</code>: silhouette is blocky and fine detail is lost.</figcaption>
+				  <figcaption>Displacement, sphere at <code>-o 16 -a 16</code>.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part5/displacement_fine.png" width="400px"/>
-				  <figcaption>Displacement, sphere at <code>-o 128 -a 128</code>: silhouette picks up real bumps.</figcaption>
+				  <figcaption>Displacement, sphere at <code>-o 128 -a 128</code>.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -591,9 +567,7 @@
 			<code>u_texture_cubemap</code> with the reflected direction. The result is a pure
 			perfect-reflection surface that picks up the environment in the cubemap. On the
 			sphere the reflection is very clean because the normals are smooth, while on the
-			cloth the reflection gets warped along the folds — different parts of the cloth
-			sample very different directions in the cubemap, which produces the characteristic
-			distorted-mirror look.
+			cloth the reflection gets warped along the folds.
 		</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -604,7 +578,7 @@
 				</td>
 				<td style="text-align: center;">
 				  <img src="images/part5/part5.mirror.png" width="400px"/>
-				  <figcaption>Mirror shader on the cloth — folds distort the reflection.</figcaption>
+				  <figcaption>Mirror shader on the cloth.</figcaption>
 				</td>
 			  </tr>
 			</table>
